@@ -1,0 +1,46 @@
+<!--  наследуемся от шаблона default.html, который мы создавали ещё во времена flatpages -->
+{% extends 'flatpages/default.html' %}
+
+<!-- Название у нас будет products -->
+{% block title %}
+Products
+{% endblock title %}
+
+<!-- В контенте на странице мы выводим все товары -->
+{% block content %}
+    <h1>Все статьи и новости</h1>
+    <h3>{{ posts|length }}</h3>
+    <h3>{{ value1|default_if_none:"ничего" }}</h3>
+    <hr>
+    {% if posts %}
+        <table>
+            <tr>
+                <td>
+                    Заголовок
+                </td>
+                <td>
+                    Дата публикации
+                </td>
+                <td>
+                    Краткое содержание
+                </td>
+            </tr>
+        {% for post in posts %}
+            <tr>
+                <td>
+                    {{ post.heading }}
+                </td>
+                <td>
+                    {{ post.date_create|date:'d M Y' }}
+                </td>
+                <td>
+                    {{ post.text|truncatewords:20 }}
+                </td>
+            </tr>
+        {% endfor %}
+        </table>
+    {% else %}
+        <h2>Товаров нет!</h2>
+    {% endif %}
+
+{% endblock content %}
