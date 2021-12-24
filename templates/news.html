@@ -71,6 +71,10 @@ Products
     {% else %}
         <h2>Товаров нет!</h2>
     {% endif %}
+    <br>
+    {% if is_not_authors %}
+        <button> <a href="/news/upgrade/">Стать Автором</a> </button>
+    {% endif %}
 
 
 {% endblock content %}
