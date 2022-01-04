@@ -1,15 +1,13 @@
-from django.views import View
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from .models import Post, Category
-from django.shortcuts import render
-from .filters import SearchFilter, AddFilter
-from django.core.paginator import Paginator
+from .filters import SearchFilter
 from .forms import PostForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import redirect
 from django.contrib.auth.models import Group
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.shortcuts import render
 
 
 class PostList(LoginRequiredMixin, ListView):
@@ -25,8 +23,18 @@ class PostList(LoginRequiredMixin, ListView):
 
 
 class PostDetail(DetailView):
+    model = Post
     template_name = 'post.html'
-    queryset = Post.objects.all()
+    context_object_name = 'post'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['categories'] = Category.objects.all()
+        context['form'] = PostForm()
+        context['is_author'] = self.request.user.groups.filter(name='author').exists()
+        context['is_auth'] = self.request.user.is_authenticated
+        context['current_user'] = self.request.user
+        return context
 
 
 class SearchList(ListView):
@@ -41,6 +49,7 @@ class SearchList(ListView):
 
 
 class AddList(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
+    model = Post
     template_name = 'add.html'
     form_class = PostForm
     permission_required = ('news.add_post',)
@@ -59,7 +68,7 @@ class PostUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
 class PostDeleteView(LoginRequiredMixin, DeleteView):
     template_name = 'delete.html'
     queryset = Post.objects.all()
-    success_url = '/news/'
+    success_url = '/'
 
 
 @login_required
@@ -68,4 +77,19 @@ def upgrade_me(request):
     authors_group = Group.objects.get(name='authors')
     if not request.user.groups.filter(name='authors').exists():
         authors_group.user_set.add(user)
-    return redirect('/news/')
+    return redirect('/')
+
+
+@login_required
+def subscribe_categories(request):
+    user = request.user
+    catt_id = request.POST['catt_id']
+    category = Category.objects.get(pk=int(catt_id))
+
+    if user not in category.subscr_user.all():
+        category.subscr_user.add(user)
+
+    else:
+        category.subscr_user.remove(user)
+
+    return redirect(request.META.get('HTTP_REFERER', '/'))

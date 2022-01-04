@@ -13,6 +13,8 @@ import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
+from news.mail_pass import mail_pass
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
@@ -25,7 +27,7 @@ SECRET_KEY = 'django-insecure-hb&ccxvn2l9_m^kphjm5f++bgb2zbyt5#n5s6mjsf849h@u^)-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1']
 
 SITE_ID = 1
 
@@ -39,7 +41,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'news',
+    'django_apscheduler',
+    'news.apps.NewsConfig',
     'accounts',
     'django.contrib.sites',
     'django.contrib.flatpages',
@@ -161,3 +164,18 @@ ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
 ACCOUNT_EMAIL_VERIFICATION = 'none'
 ACCOUNT_FORMS = {'signup': 'accounts.models.BasicSignupForm'}
+
+# EMAIL CONFIG
+EMAIL_FROM = 'fanatik86@mail.ru'
+
+EMAIL_HOST = 'smtp.mail.ru'  # адрес сервера Яндекс-почты для всех один и тот же
+EMAIL_PORT = 465  # порт smtp сервера тоже одинаковый
+EMAIL_HOST_USER = 'fanatik86@mail.ru'  # имя пользователя
+EMAIL_HOST_PASSWORD = mail_pass  # пароль от почты
+EMAIL_USE_SSL = True  # Яндекс использует ssl
+
+# формат даты, которую будет воспринимать наш задачник (вспоминаем модуль по фильтрам)
+APSCHEDULER_DATETIME_FORMAT = "N j, Y, f:s a"
+
+# если задача не выполняется за 25 секунд, то она автоматически снимается, можете поставить время побольше, но как правило, это сильно бьёт по производительности сервера
+APSCHEDULER_RUN_NOW_TIMEOUT = 25  # Seconds

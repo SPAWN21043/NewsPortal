@@ -16,6 +16,7 @@ class Author(models.Model):
 
 class Category(models.Model):
     name_category = models.CharField(unique=True, max_length=50)
+    subscr_user = models.ManyToManyField(User, related_name='subscribed_categories')
 
     def __str__(self):
         return f'{self.name_category}'
@@ -51,7 +52,7 @@ class Post(models.Model):
         return self.text[:size] + '...'
 
     def __str__(self):
-        return f'{self.post_user}{self.date_create}{self.heading}{self.text}'
+        return f'{self.post_user}{self.date_create}{self.heading}{self.text}{self.categ}'
 
     def get_absolute_url(self):  # добавим абсолютный путь, чтобы после создания нас перебрасывало на страницу с товаром
         return f'/news/{self.id}'
@@ -60,6 +61,9 @@ class Post(models.Model):
 class PostCategory(models.Model):
     post_post = models.ForeignKey(Post, on_delete=models.CASCADE)
     post_caty = models.ForeignKey(Category, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f'{self.post_post}{self.post_caty}'
 
 
 class Comment(models.Model):

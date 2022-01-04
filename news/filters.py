@@ -14,12 +14,4 @@ class SearchFilter(FilterSet):
         fields = {'date_create', 'heading', 'post_user'}  # поля, которые мы будем фильтровать (т. е. отбирать по каким-то критериям, имена берутся из моделей)
 
 
-class AddFilter(FilterSet):
-    heading = CharFilter()
-    is_news = CharFilter()
-    text = CharFilter()
 
-    # Здесь в мета классе надо предоставить модель и указать поля, по которым будет фильтроваться (т. е. подбираться) информация о товарах
-    class Meta:
-        model = Post
-        fields = {'heading', 'is_news', 'text', 'post_user'}
