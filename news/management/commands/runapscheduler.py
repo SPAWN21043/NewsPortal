@@ -20,7 +20,7 @@ logger = logging.getLogger(__name__)
 
 
 # функция для рассылки писем
-def send_posts(email_list, posts):
+'''def send_posts(email_list, posts):
     """
     Простая функция для рассылки постов по заданным адресам
     :param email_list: один адрес почты или список адресов
@@ -124,4 +124,4 @@ class Command(BaseCommand):
         except KeyboardInterrupt:
             logger.info("Stopping scheduler...")
             scheduler.shutdown()
-            logger.info("Scheduler shutdown successfully!")
+            logger.info("Scheduler shutdown successfully!")'''

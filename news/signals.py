@@ -4,9 +4,39 @@ from django.conf import settings
 from .models import Post, User, Category
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
+from .tasks import send_post_mail
+import logging
+
+
+logger = logging.getLogger(__name__)
 
 
 @receiver(m2m_changed, sender=Post.categ.through)
+def save_posts(instance, action, pk_set, *args, **kwargs):
+    if action == 'post_add':
+        for pk in pk_set:
+            cat_id = Category.objects.get(pk=pk)
+
+            to_mail = [user.email for user in cat_id.subscr_user.all()]
+            print(to_mail)
+            post_id = instance.id
+            name_post = instance.heading
+            post_preview = instance.text
+
+            if isinstance(to_mail, str):
+                post_mail = [to_mail, ]
+            else:
+                post_mail = to_mail
+
+            print(post_mail)
+
+            send_post_mail.delay(name_post, post_id, post_preview, post_mail)
+
+
+
+
+
+'''@receiver(m2m_changed, sender=Post.categ.through)
 def save_posts(instance, action, pk_set, *args, **kwargs):
 
     if action == "post_add":
@@ -28,7 +58,7 @@ def save_posts(instance, action, pk_set, *args, **kwargs):
                                          to=subscribers_list)
 
             msg.attach_alternative(html_save, "text/html")
-            msg.send()
+            msg.send()'''
 
 
 @receiver(post_save, sender=Post)
