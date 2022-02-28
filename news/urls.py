@@ -1,6 +1,7 @@
 from django.urls import path
 from .views import PostList, PostDetail, SearchList, AddList, PostUpdateView, PostDeleteView
 from .views import upgrade_me, subscribe_categories
+from django.views.decorators.cache import cache_page
 
 urlpatterns = [
     path('', PostList.as_view()),

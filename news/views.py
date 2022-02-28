@@ -7,6 +7,7 @@ from django.shortcuts import redirect
 from django.contrib.auth.models import Group
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.core.cache import cache
 from django.shortcuts import render
 
 
@@ -23,18 +24,28 @@ class PostList(LoginRequiredMixin, ListView):
 
 
 class PostDetail(DetailView):
-    model = Post
+    '''model = Post'''
     template_name = 'post.html'
-    context_object_name = 'post'
+    '''context_object_name = "post"'''
+    queryset = Post.objects.all()
 
-    def get_context_data(self, **kwargs):
+    def get_object(self, **kwargs):
+        obj = cache.get(f'post-{self.kwargs["pk"]}', None)
+
+        if not obj:
+            obj = super().get_object(queryset=self.queryset)
+            cache.set(f'post-{self.kwargs["pk"]}', obj)
+
+        return obj
+
+    '''def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['categories'] = Category.objects.all()
         context['form'] = PostForm()
         context['is_author'] = self.request.user.groups.filter(name='author').exists()
         context['is_auth'] = self.request.user.is_authenticated
         context['current_user'] = self.request.user
-        return context
+        return context'''
 
 
 class SearchList(ListView):
