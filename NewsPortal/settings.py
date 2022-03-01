@@ -73,6 +73,12 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'NewsPortal.urls'
 
+
+LOCALE_PATH = [
+    os.path.join(BASE_DIR, 'locale')
+]
+
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -308,3 +314,6 @@ LOGGING = {
         },
     },
 }
+
+
+
