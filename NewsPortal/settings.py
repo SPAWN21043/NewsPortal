@@ -70,14 +70,17 @@ MIDDLEWARE = [
 
     'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
     'news.middlewares.TimezoneMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
 ]
 
 ROOT_URLCONF = 'NewsPortal.urls'
 
 
-LOCALE_PATH = [
+SITE_ROOT = os.path.dirname(os.path.realpath(__name__))
+LOCALE_PATHS = ( os.path.join(SITE_ROOT, 'locale'), )
+'''LOCALE_PATH = [
     os.path.join(BASE_DIR, 'locale')
-]
+]'''
 
 
 TEMPLATES = [
@@ -148,7 +151,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
 
-LANGUAGE_CODE = 'ru' #'en-us'
+LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'UTC'
 
